@@ -1,0 +1,8 @@
+.custom-modal-class .ant-modal-header,
+.custom-modal-class .ant-modal-body {
+  display: none;
+}
+
+.custom-modal-class .ant-modal-footer {
+  display: none;
+}
