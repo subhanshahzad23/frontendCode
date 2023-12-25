@@ -100,7 +100,7 @@ const ChatbotComponent = () => {
       const token = Math.random().toString(36).substr(2, 9);
 
       // Generate the verification link
-      const verificationLink = `http://localhost:3000/verify-email?token=${token}`;
+      const verificationLink = `https://trade-investing.vercel.app/verify-email?token=${token}`;
 
       // EmailJS template parameters
       const templateParams = {
