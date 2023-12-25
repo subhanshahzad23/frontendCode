@@ -1,9 +1,64 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { AiOutlineClose } from "react-icons/ai"; // Importing close icon from react-icons
 
 const Card = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const [links, setLinks] = useState([]);
+
+  const [links, setLinks] = useState([
+    {
+      name: "Mary Checkman",
+      description: "Just copied a",
+      percentage: "+500%",
+      trade: "trade on coin-base",
+      visits: (
+        <span>
+          Visits -{" "}
+          <img
+            src="./USA.png"
+            alt="US flag"
+            className="inline h-4 w- object-cover mr-1"
+          />{" "}
+          United States
+        </span>
+      ),
+    },
+    {
+      name: "Mary Checkman",
+      description: "Just copied a",
+      percentage: "+500%",
+      trade: "trade on coin-base",
+      visits: (
+        <span>
+          Visits -{" "}
+          <img
+            src="./USA.png"
+            alt="US flag"
+            className="inline h-4 w-4 object-cover mr-1"
+          />{" "}
+          United States
+        </span>
+      ),
+    },
+    {
+      name: "Mary Checkman",
+      description: "Just copied a",
+      percentage: "+500%",
+      trade: "trade on coin-base",
+      visits: (
+        <span>
+          Visits -{" "}
+          <img
+            src="./USA.png"
+            alt="US flag"
+            className="inline h-4 w-4 object-cover mr-1"
+          />{" "}
+          United States
+        </span>
+      ),
+    },
+    // ...other link objects
+  ]);
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -17,40 +72,58 @@ const Card = () => {
     };
 
     fetchLinks();
-  }, []); // Empty dependency array ensures the effect runs only once when the component mounts
+  }, []);
 
   if (!isOpen) {
     return null;
   }
 
+  const linkItems = links.map((link, index) => (
+    <div key={index} className="flex items-center mb-4 px-2">
+      <img className="w-18 h-14 mr-4" src="./oldman.jpg" alt="Link logo" />
+      <div>
+        <a className="text-gray-700 text-base font-semibold text-sm">
+          {link.name}
+        </a>
+        <p
+          className="text-gray-700 text-base font-light text-xs grey-100 mt-1 mb-2 "
+          style={{ fontSize: "14px" }}
+        >
+          {link.description}{" "}
+          <span style={{ fontWeight: "bold" }}>{link.percentage}</span>{" "}
+          {link.trade}
+        </p>
+        <p className="text-gray-700 text-base font-light text-xs grey-100 mt-1">
+          {link.visits}
+        </p>
+      </div>
+    </div>
+  ));
+
   return (
     <div className="max-w-sm w-80 rounded overflow-hidden shadow-lg ml-5">
-      <div className="px-6 py-4 flex justify-between items-center">
-        <div className="text-md mb-2 text-grey-500 font-light">
+      <div className="px-6 py-4 flex justify-between items-start">
+        <div
+          className="text-md mb-2 font-medium"
+          style={{
+            color: "#667085",
+            fontFamily: "Inter",
+          }}
+        >
           Links you may like
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className=" font-bold py-1 px-2 rounded"
+          className="text-lg font-bold p-1 rounded"
+          aria-label="Close"
+          style={{
+            color: "#667085",
+          }}
         >
-          X
+          <AiOutlineClose />
         </button>
       </div>
-
-      <div className="flex items-center mb-4 px-2">
-        <img className="w-18 h-14 mr-4" src="./logo512.png" alt="Link logo" />
-        <div>
-          <a className="text-gray-700 text-base font-semibold text-sm">
-            Mary Checkman
-          </a>
-          <p className="text-gray-700 text-base font-light text-xs grey-100">
-            Just copied a +500% trade on coin-base{" "}
-          </p>
-          <p className="text-gray-700 text-base font-light text-xs grey-100 mt-1">
-            Visits - 🇺🇸 United states{" "}
-          </p>
-        </div>
-      </div>
+      {linkItems}
     </div>
   );
 };

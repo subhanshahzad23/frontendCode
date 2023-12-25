@@ -26,11 +26,13 @@ import CountContainer from "./countdownContainer";
 import TopContainer from "./topContainer";
 import CardComponent from "./card";
 import Card from "./bottomCard";
-import photo from "../image/photo_2023-12-16_08-01-17.jpg";
+import photo from "../image/oldman.jpg";
 import { Modal } from "antd";
 
 const ChatbotComponent = () => {
   const [messages, setMessages] = useState([]);
+  const [selectedMessagingOption, setSelectedMessagingOption] = useState(null);
+
   const [targetDate, setTargetDate] = useState([]);
   const [showCard, setShowCard] = useState(false);
   const [email, setEmail] = useState("");
@@ -78,25 +80,49 @@ const ChatbotComponent = () => {
         defaultValue="USD"
       >
         <Option value="USD">
-          <span style={{ display: "flex", alignItems: "center" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontFamily: "Roboto, sans-serif",
+            }}
+          >
             <img src={usa} className="h-4 w-4 mr-1 rounded-full object-cover" />
             <span>USA, $</span>
           </span>
         </Option>
         <Option value="CAD">
-          <span style={{ display: "flex", alignItems: "center" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontFamily: "Roboto, sans-serif",
+            }}
+          >
             <img src={cad} className="h-4 w-4 mr-1 rounded-full object-cover" />
             <span>CAD, $</span>
           </span>
         </Option>
         <Option value="AUS">
-          <span style={{ display: "flex", alignItems: "center" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontFamily: "Roboto, sans-serif",
+            }}
+          >
             <img src={aus} className="h-4 w-4 mr-1 rounded-full object-cover" />
             <span>AUS, $</span>
           </span>
         </Option>
         <Option value="CNY">
-          <span style={{ display: "flex", alignItems: "center" }}>
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontFamily: "Roboto, sans-serif",
+            }}
+          >
             <img src={chi} className="h-4 w-4 mr-1 rounded-full object-cover" />
             <span>CNY, ¥</span>
           </span>
@@ -237,7 +263,20 @@ const ChatbotComponent = () => {
             </Col>
             <Col>
               {" "}
-              <Button className="text-grey-600" onClick={handleNoButton}>
+              <Button
+                className="bg-blue-500 text-white"
+                onClick={() =>
+                  handleButtonClick([
+                    { type: "name", content: "" },
+                    {
+                      type: "bot",
+                      content:
+                        "2. How much money would you estimate you have invested in cryptocurrencies?",
+                    },
+                    { type: "currency", content: "" },
+                  ])
+                }
+              >
                 No
               </Button>
             </Col>
@@ -256,14 +295,81 @@ const ChatbotComponent = () => {
                 },
               ]}
             >
-              <InputNumber
-                addonBefore={prefixSelector}
-                style={{
-                  width: "100%",
-                }}
+              <Input
+                placeholder="Enter the amount"
+                addonBefore={
+                  <Form.Item name="currency" noStyle>
+                    <Select
+                      style={{
+                        width: 100,
+                      }}
+                      defaultValue="USD"
+                    >
+                      <Option value="USD">
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontFamily: "Roboto, sans-serif",
+                          }}
+                        >
+                          <img
+                            src={usa}
+                            className="h-4 w-4 mr-1 rounded-full object-cover"
+                          />
+                          <span>USA, $</span>
+                        </span>
+                      </Option>
+                      <Option value="CAD">
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontFamily: "Roboto, sans-serif",
+                          }}
+                        >
+                          <img
+                            src={cad}
+                            className="h-4 w-4 mr-1 rounded-full object-cover"
+                          />
+                          <span>CAD, $</span>
+                        </span>
+                      </Option>
+                      <Option value="AUS">
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontFamily: "Roboto, sans-serif",
+                          }}
+                        >
+                          <img
+                            src={aus}
+                            className="h-4 w-4 mr-1 rounded-full object-cover"
+                          />
+                          <span>AUS, $</span>
+                        </span>
+                      </Option>
+                      <Option value="CNY">
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontFamily: "Roboto, sans-serif",
+                          }}
+                        >
+                          <img
+                            src={chi}
+                            className="h-4 w-4 mr-1 rounded-full object-cover"
+                          />
+                          <span>CNY, ¥</span>
+                        </span>
+                      </Option>
+                    </Select>
+                  </Form.Item>
+                }
               />
             </Form.Item>
-
             <Button
               className="bg-blue-500 text-white -mt-3"
               onClick={() =>
@@ -271,7 +377,7 @@ const ChatbotComponent = () => {
                   { type: "name", content: "" },
                   {
                     type: "bot",
-                    content: "3. When do you intend to start profiting ?",
+                    content: "3. When do you intend to start profiting?",
                   },
                   { type: "date", content: "" },
                 ])
@@ -281,6 +387,7 @@ const ChatbotComponent = () => {
             </Button>
           </div>
         );
+
       case "date":
         return (
           <div className="user-inputs">
@@ -486,7 +593,7 @@ const ChatbotComponent = () => {
       <div className="flex items-center justify-center mb-5">
         <div className="flex border w-48 rounded-full h-8 items-center my-3">
           <OnlineStatus />
-          <span className="ml-4">Helena is Online</span>
+          <span className="ml-4 font-bold">Helena is Online</span>
         </div>
       </div>
       <div className="flex  mb-20">

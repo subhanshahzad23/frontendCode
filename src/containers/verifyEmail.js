@@ -5,7 +5,7 @@ import avatar from "../image/profile_pic.jpg";
 import { Button } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import photo from "../image/photo_2023-12-16_08-01-17.jpg";
+import photo from "../image/oldman.jpg";
 import Card from "./bottomCard";
 import Confetti from "react-confetti";
 
