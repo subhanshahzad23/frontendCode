@@ -8,6 +8,7 @@ import axios from "axios";
 import photo from "../image/oldman.jpg";
 import Card from "./bottomCard";
 import Confetti from "react-confetti";
+import confetti from "canvas-confetti";
 
 const VerifyComponent = () => {
   const [showConfetti, setShowConfetti] = useState(true);
@@ -20,6 +21,18 @@ const VerifyComponent = () => {
     setTimeout(() => {
       setShowConfetti(true);
     }, 2000); // Adjust the delay as needed
+  }, []);
+
+  const runConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+  };
+
+  useEffect(() => {
+    runConfetti();
   }, []);
 
   const links = [

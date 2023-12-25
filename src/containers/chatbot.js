@@ -37,11 +37,62 @@ const ChatbotComponent = () => {
 
   const [targetDate, setTargetDate] = useState([]);
   const [showCard, setShowCard] = useState(false);
-  const [email, setEmail] = useState("");
   const messagesEndRef = useRef(null);
   const [loadings, setLoadings] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [currency, setCurrency] = useState("USD");
+  const [mobile, setMobile] = useState("Undefined");
+  const [whatsapp, setWhatsapp] = useState("Undefined");
+  const [telegram, setTelegram] = useState("Undefined");
+  const [amount, setAmount] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleDateChange = (date, dateString) => {
+    console.log("Selected date:", dateString); // Debugging line
+    setSelectedDate(dateString);
+  };
+
+  const handleSheet = async () => {
+    try {
+      const data = [
+        name,
+        email,
+        currency,
+        amount,
+        selectedDate,
+        mobile,
+        telegram,
+        whatsapp,
+      ];
+
+      // Transform 'undefined' values into the string "undefined"
+      const transformedData = data.map((item) =>
+        item === undefined ? "undefined" : item
+      );
+
+      const response = await fetch(
+        "https://v1.nocodeapi.com/subhanshahzad12/google_sheets/lBotLvPuZyQkdTFT?tabId=Sheet1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([transformedData]),
+        }
+      );
+
+      await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleParagraphClick = async () => {
     if (email) {
@@ -237,7 +288,10 @@ const ChatbotComponent = () => {
                 },
               ]}
             >
-              <Input placeholder="Name" />
+              <Input
+                placeholder="Name"
+                onChange={(e) => setName(e.target.value)}
+              />
             </Form.Item>
             <Form.Item
               name="email"
@@ -338,6 +392,7 @@ const ChatbotComponent = () => {
             >
               <Input
                 placeholder="Enter the amount"
+                onChange={(e) => setAmount(e.target.value)}
                 addonBefore={
                   <Form.Item name="currency" noStyle>
                     <Select
@@ -345,6 +400,7 @@ const ChatbotComponent = () => {
                         width: 100,
                       }}
                       defaultValue="USD"
+                      onChange={(value) => setCurrency(value)}
                     >
                       <Option value="USD">
                         <span
@@ -443,7 +499,11 @@ const ChatbotComponent = () => {
               style={{ marginBottom: "30px" }}
             >
               {/* <Input placeholder="Date" /> */}
-              <DatePicker placeholder="yyyy-mm-dd" className="w-full" />
+              <DatePicker
+                placeholder="yyyy-mm-dd"
+                className="w-full"
+                onChange={handleDateChange} // Attach the event handler here
+              />
             </Form.Item>
 
             <Button
@@ -495,7 +555,10 @@ const ChatbotComponent = () => {
                 },
               ]}
             >
-              <Input placeholder="Mobile Number" />
+              <Input
+                placeholder="Mobile Number"
+                onChange={(e) => setMobile(e.target.value)}
+              />
             </Form.Item>
             <div className="flex mt-5 justify-center">
               <Form.Item
@@ -508,7 +571,10 @@ const ChatbotComponent = () => {
                   className="bg-blue-500 text-white"
                   htmlType="submit"
                   loading={loadings}
-                  onClick={showModal}
+                  onClick={() => {
+                    showModal();
+                    handleSheet();
+                  }}
                   style={{ cursor: "pointer" }} // Add this line
                 >
                   Confirm
@@ -530,7 +596,11 @@ const ChatbotComponent = () => {
                 },
               ]}
             >
-              <Input placeholder="Telegram" prefix={<FaTelegram />} />
+              <Input
+                placeholder="Telegram"
+                prefix={<FaTelegram />}
+                onChange={(e) => setTelegram(e.target.value)}
+              />
             </Form.Item>
             <div className="flex mt-5 justify-center">
               <Form.Item
@@ -543,7 +613,10 @@ const ChatbotComponent = () => {
                   className="bg-blue-500 text-white"
                   htmlType="submit"
                   loading={loadings}
-                  onClick={showModal}
+                  onClick={() => {
+                    showModal();
+                    handleSheet();
+                  }}
                   style={{ cursor: "pointer" }} // Add this line
                 >
                   Confirm
@@ -565,7 +638,11 @@ const ChatbotComponent = () => {
                 },
               ]}
             >
-              <Input placeholder="WhatsApp" prefix={<WhatsAppOutlined />} />
+              <Input
+                placeholder="WhatsApp"
+                prefix={<WhatsAppOutlined />}
+                onChange={(e) => setWhatsapp(e.target.value)}
+              />
             </Form.Item>
             <div className="flex mt-5 justify-center">
               <Form.Item
@@ -578,7 +655,10 @@ const ChatbotComponent = () => {
                   className="bg-blue-500 text-white"
                   htmlType="submit"
                   loading={loadings}
-                  onClick={showModal}
+                  onClick={() => {
+                    showModal();
+                    handleSheet();
+                  }}
                   style={{ cursor: "pointer" }} // Add this line
                 >
                   Confirm
