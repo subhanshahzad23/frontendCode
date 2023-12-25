@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import arrow from "../image/up-arrow.png";
+import emailjs from "emailjs-com";
+
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -41,8 +43,41 @@ const ChatbotComponent = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
 
-  const handleParagraphClick = () => {
-    navigate("/verify-email");
+  const handleParagraphClick = async () => {
+    if (email) {
+      // Generate a token or unique identifier
+      const token = Math.random().toString(36).substr(2, 9);
+
+      // Generate the verification link
+      const verificationLink = `http://localhost:3000/verify-email?token=${token}`;
+
+      // EmailJS template parameters
+      const templateParams = {
+        to_email: email,
+        verification_link: verificationLink,
+      };
+
+      // Send email using EmailJS
+      try {
+        const response = await emailjs.send(
+          "service_fyj8s3g", // Replace with your EmailJS service ID
+          "template_segd4f2", // Replace with your EmailJS template ID
+          templateParams,
+          "Xjayr8x7rGXS1ditD" // Replace with your EmailJS user ID
+        );
+
+        if (response.status === 200) {
+          console.log("Verification email sent");
+          // setIsLoading(true); // Keep loading state active
+        } else {
+          console.error("Failed to send verification email");
+        }
+      } catch (error) {
+        console.error("Error sending email:", error);
+      }
+    } else {
+      console.error("Email not provided");
+    }
   };
 
   const showModal = () => {
@@ -690,6 +725,7 @@ const ChatbotComponent = () => {
               className="w-full md:w-2/3 p-4"
               onClick={handleParagraphClick}
               style={{ cursor: "pointer" }}
+              loading={loadings}
             >
               [Action Needed] Please Verify Your Email
             </p>
