@@ -2,8 +2,7 @@
 
 /* Customize the appearance of the "OK" button */
 .ant-picker-footer button.ant-btn-primary {
-    background-color: #3200ff; /* Set your desired background color */
-    border-color: none; /* Set your desired border color */
-    color: #fff; /* Set your desired text color */
-  }
-  
+  background-color: #3200ff; /* Set your desired background color */
+  border-color: none; /* Set your desired border color */
+  color: #fff; /* Set your desired text color */
+}

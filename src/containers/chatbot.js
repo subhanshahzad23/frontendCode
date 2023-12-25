@@ -228,7 +228,7 @@ const ChatbotComponent = () => {
         return (
           <div className="user-inputs">
             <Form.Item
-              className="mb-1"
+              className="mb-3"
               name="name"
               rules={[
                 {
@@ -247,8 +247,13 @@ const ChatbotComponent = () => {
                   message: "Email required!",
                 },
               ]}
+              style={{ marginBottom: "30px" }}
             >
-              <Input placeholder="Email" />
+              <Input
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </Form.Item>
 
             <Button
@@ -329,6 +334,7 @@ const ChatbotComponent = () => {
                   message: "Please input amount!",
                 },
               ]}
+              style={{ marginBottom: "30px" }}
             >
               <Input
                 placeholder="Enter the amount"
@@ -434,13 +440,14 @@ const ChatbotComponent = () => {
                   message: "Input required!",
                 },
               ]}
+              style={{ marginBottom: "30px" }}
             >
               {/* <Input placeholder="Date" /> */}
               <DatePicker placeholder="yyyy-mm-dd" className="w-full" />
             </Form.Item>
 
             <Button
-              className="bg-blue-500 text-white -mt-3"
+              className="bg-blue-500 text-white -mt-3 "
               onClick={() =>
                 handleButtonClick([
                   { type: "name", content: "" },
@@ -502,6 +509,7 @@ const ChatbotComponent = () => {
                   htmlType="submit"
                   loading={loadings}
                   onClick={showModal}
+                  style={{ cursor: "pointer" }} // Add this line
                 >
                   Confirm
                 </Button>
@@ -536,6 +544,7 @@ const ChatbotComponent = () => {
                   htmlType="submit"
                   loading={loadings}
                   onClick={showModal}
+                  style={{ cursor: "pointer" }} // Add this line
                 >
                   Confirm
                 </Button>
@@ -570,6 +579,7 @@ const ChatbotComponent = () => {
                   htmlType="submit"
                   loading={loadings}
                   onClick={showModal}
+                  style={{ cursor: "pointer" }} // Add this line
                 >
                   Confirm
                 </Button>
