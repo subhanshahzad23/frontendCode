@@ -94,8 +94,30 @@ const ChatbotComponent = () => {
     }
   };
 
+  // Function to verify email via Hunter.io
+  const verifyEmailWithHunter = async (email) => {
+    try {
+      const response = await fetch(
+        `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=2cc0cf1be11faa5dc2727d2ac5c3d966c3972913`
+      );
+      const data = await response.json();
+
+      return data.data.status === "deliverable"; // Check if the email is deliverable
+    } catch (error) {
+      console.error("Error verifying email with Hunter.io:", error);
+      return false;
+    }
+  };
+
   const handleParagraphClick = async () => {
     if (email) {
+      // Verify the email using Hunter.io
+      const isDeliverable = await verifyEmailWithHunter(email);
+      if (!isDeliverable) {
+        console.error("Email is not valid or deliverable");
+
+        return;
+      }
       // Generate a token or unique identifier
       const token = Math.random().toString(36).substr(2, 9);
 
