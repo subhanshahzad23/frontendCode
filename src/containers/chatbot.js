@@ -77,63 +77,63 @@ const ChatbotComponent = () => {
     setSelectedDate(dateString); // Store the selected date as a string
   };
 
-  const handleSheet = async () => {
-    try {
-      const data = [
-        name,
-        email,
-        currency,
-        amount,
-        selectedDate,
-        mobile,
-        telegram,
-        whatsapp,
-      ];
+  const [emailVerified, setEmailVerified] = useState("");
 
-      // Transform 'undefined' values into the string "undefined"
-      const transformedData = data.map((item) =>
-        item === undefined ? "undefined" : item
-      );
-
-      const response = await fetch(
-        "https://v1.nocodeapi.com/subhanshahzad12/google_sheets/lBotLvPuZyQkdTFT?tabId=Sheet1",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify([transformedData]),
-        }
-      );
-
-      await response.json();
-    } catch (error) {
-      console.log(error);
+  useEffect(() => {
+    if (emailVerified !== "") {
+      handleSheet(emailVerified);
     }
-  };
+  }, [emailVerified]); // Only run when emailVerified changes
 
-  // Function to verify email via Hunter.io
   const verifyEmailWithHunter = async (email) => {
     try {
       const response = await fetch(
         `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=2cc0cf1be11faa5dc2727d2ac5c3d966c3972913`
       );
-      const data = await response.json();
 
-      return data.data.status === "deliverable"; // Check if the email is deliverable
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Hunter.io response:", data); // Log the full response
+
+      return data.data.status === "valid";
     } catch (error) {
       console.error("Error verifying email with Hunter.io:", error);
       return false;
     }
   };
 
+  // const verifyEmailWithZeroBounce = async (email) => {
+  //   const apiKey = "9e44a32a8d9d43ecb0e5c79cb7cae972"; // Not recommended to expose this in client-side code
+  //   const url = `https://api.zerobounce.net/v2/validate?email=${encodeURIComponent(
+  //     email
+  //   )}&apiKey=${apiKey}`;
+
+  //   try {
+  //     const response = await fetch(url);
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  //     const data = await response.json();
+
+  //     // Add logic based on ZeroBounce's response format
+  //     return data.status === "Valid";
+  //   } catch (error) {
+  //     console.error("Error verifying email with ZeroBounce:", error);
+  //     return false;
+  //   }
+  // };
+
   const handleParagraphClick = async () => {
     if (email) {
-      // Verify the email using Hunter.io
-      const isDeliverable = await verifyEmailWithHunter(email);
-      if (!isDeliverable) {
-        console.error("Email is not valid or deliverable");
+      // Verify the email using ZeroBounce
+      const isEmailValid = await verifyEmailWithHunter(email);
+      setEmailVerified(isEmailValid ? "Yes" : "No");
 
+      if (!isEmailValid) {
+        console.error("Invalid email address.");
         return;
       }
       // Generate a token or unique identifier
@@ -159,15 +159,65 @@ const ChatbotComponent = () => {
 
         if (response.status === 200) {
           console.log("Verification email sent");
-          // setIsLoading(true); // Keep loading state active
+          // setEmailVerified("Yes");
         } else {
           console.error("Failed to send verification email");
+          // setEmailVerified("No");
         }
       } catch (error) {
         console.error("Error sending email:", error);
+        if (
+          error.message.includes(
+            "The email account that you tried to reach does not exist"
+          )
+        ) {
+          // setEmailVerified("No");
+        } else {
+          // Handle other types of errors here
+          // setEmailVerified("No"); // or a different status based on the error
+        }
       }
+      console.log("hello donkey");
+      console.log("Email Verified:", emailVerified);
+      // await handleSheet();
     } else {
       console.error("Email not provided");
+    }
+  };
+
+  const handleSheet = async (emailVerified) => {
+    try {
+      const data = [
+        name,
+        email,
+        currency,
+        amount,
+        selectedDate,
+        mobile,
+        telegram,
+        whatsapp,
+        emailVerified,
+      ];
+
+      // Transform 'undefined' values into the string "undefined"
+      const transformedData = data.map((item) =>
+        item === undefined ? "undefined" : item
+      );
+
+      const response = await fetch(
+        "https://v1.nocodeapi.com/subhanshahzad12/google_sheets/lBotLvPuZyQkdTFT?tabId=Sheet1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([transformedData]),
+        }
+      );
+
+      await response.json();
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -328,7 +378,7 @@ const ChatbotComponent = () => {
 
     // If validation passes, proceed with showModal and handleSheet
     showModal();
-    handleSheet();
+    // handleSheet();
   };
 
   const validateTelegramAndProceed = () => {
@@ -340,7 +390,7 @@ const ChatbotComponent = () => {
 
     // If validation passes, proceed with showModal and handleSheet
     showModal();
-    handleSheet();
+    // handleSheet();
   };
   const validateWhatsappAndProceed = () => {
     // Check if the WhatsApp input is not empty
@@ -351,7 +401,7 @@ const ChatbotComponent = () => {
 
     // If validation passes, proceed with showModal and handleSheet
     showModal();
-    handleSheet();
+    // handleSheet();
   };
 
   const validateDateAndHandleButtonClick = () => {
