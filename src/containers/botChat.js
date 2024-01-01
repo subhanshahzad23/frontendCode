@@ -40,3 +40,17 @@ export const messageArray4 = [
   { type: "card", content: "Telegram" },
   { type: "telegram&whatsapp", content: "" },
 ];
+
+
+export const messageArraySequence =
+[
+  { type: "name", content: "" },
+  { type: "bot", content: "Hi 👋" },
+  { type: "bot", content: "I'm Helena from Traders Lab." },
+  {
+    type: "bot",
+    content:
+      "Do you want to find out how you could unlock the $10,000 profit trading digital currencies?",
+  },
+  { type: "button", content: "Yes" },
+]

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Assuming you will use axios in the future
+import { headerText } from "./HeaderText";
 
 const CountContainer = () => {
   // Function to get or set the target date
@@ -14,16 +15,7 @@ const CountContainer = () => {
     }
   };
 
-  const [countdownData, setCountdownData] = useState({
-    header1:
-      "Warning: Limited offer to profit from digital currencies in 24 hours!",
-    header2:
-      "UNLOCK $10,000+ PROFITS FAST: IN 24 HOURS COPYING PROTRADERS ON BINANCE, BITMEX, COINBASE!",
-    targetDate: getInitialTargetDate(),
-    days: 0,
-    hours: 0,
-    minutes: 0,
-  });
+  const [countdownData, setCountdownData] = useState(headerText(getInitialTargetDate()));
 
   // Countdown logic
   const updateCountdown = () => {

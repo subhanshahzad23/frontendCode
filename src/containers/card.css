@@ -1,8 +1,13 @@
 .custom-modal-class .ant-modal-header,
-.custom-modal-class .ant-modal-body {
-  display: none;
+.custom-modal-class .ant-modal-footer {
+  display: none; /* Hide these parts of the modal */
 }
 
-.custom-modal-class .ant-modal-footer {
-  display: none;
+.custom-modal-class .ant-modal-content {
+  background: transparent; /* Make background transparent */
+  box-shadow: none; /* Remove shadow */
+}
+
+.custom-modal-class .ant-modal-wrap {
+  overflow: hidden; /* Hide overflow to remove unwanted scrollbars */
 }

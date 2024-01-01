@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import arrow from "../image/up-arrow.png";
 import emailjs from "emailjs-com";
-import {
-  messageArray,
-  messageArray1,
-  messageArray2,
-  messageArray3,
-  messageArray4,
-} from "./botChat.js";
-
-import { useNavigate } from "react-router-dom";
+// import {
+//   messageArray,
+//   messageArray1,
+//   messageArray2,
+//   messageArray3,
+//   messageArray4,
+//   messageArraySequence
+// } from "./botChat.js";
+import { user } from "./User.js";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { firestore } from "../firebase";
+import { collection, getDocs } from "@firebase/firestore";
 
 import {
   Button,
@@ -37,8 +40,89 @@ import CardComponent from "./card";
 import Card from "./bottomCard";
 import photo from "../image/oldman.jpg";
 import { Modal } from "antd";
+import "./card.css";
 
 const ChatbotComponent = () => {
+  // const messageArrayRef = collection(firestore, "Messages");
+  // const messageArray1Ref = collection(firestore, "Messages1");
+  // const messageArray2Ref = collection(firestore, "Messages2");
+  // const messageArray3Ref = collection(firestore, "Messages3");
+  // const messageArray4Ref = collection(firestore, "Messages4");
+  // const messageArraySeqRef = collection(firestore, "MessagesSeq");
+  // const [messageArray, setMessageArray] = useState(null);
+  // const [messageArray1, setMessageArray1] = useState(null);
+  // const [messageArray2, setMessageArray2] = useState(null);
+  // const [messageArray3, setMessageArray3] = useState(null);
+  // const [messageArray4, setMessageArray4] = useState(null);
+  // const [messageArraySequence, setMessageArraySequence] = useState(null);
+
+  // useEffect(() => {
+  //   const getMessagesArray = async () => {
+  //     const { docs } = await getDocs(messageArrayRef);
+  //     const arr = docs.map((doc) => ({ ...doc.data().message }));
+  //     setMessageArray(arr);
+  //   };
+  //   const getMessages1Array = async () => {
+  //     const { docs } = await getDocs(messageArray1Ref);
+  //     const arr = docs.map((doc) => ({ ...doc.data().message }));
+  //     setMessageArray1(arr);
+  //   };
+  //   const getMessagesArray2 = async () => {
+  //     const { docs } = await getDocs(messageArray2Ref);
+  //     const arr = docs.map((doc) => ({ ...doc.data().message }));
+  //     setMessageArray2(arr);
+  //   };
+  //   const getMessagesArray3 = async () => {
+  //     const { docs } = await getDocs(messageArray3Ref);
+  //     const arr = docs.map((doc) => ({ ...doc.data().message }));
+  //     setMessageArray3(arr);
+  //   };
+  //   const getMessagesArray4 = async () => {
+  //     const { docs } = await getDocs(messageArray4Ref);
+  //     const arr = docs.map((doc) => ({ ...doc.data().message }));
+  //     setMessageArray4(arr);
+  //   };
+  //   const getMessagesArraySeq = async () => {
+  //     const { docs } = await getDocs(messageArraySeqRef);
+  //     const arr = docs.map((doc) => ({ ...doc.data().message }));
+  //     setMessageArraySequence(arr);
+  //   };
+  //   if (!messageArray) getMessagesArray();
+  //   if (!messageArray1) getMessages1Array();
+  //   if (!messageArray2) getMessagesArray2();
+  //   if (!messageArray3) getMessagesArray3();
+  //   if (!messageArray4) getMessagesArray4();
+  //   if (!messageArraySequence) getMessagesArraySeq();
+  // }, [
+  //   messageArray,
+  //   messageArray1,
+  //   messageArray2,
+  //   messageArray3,
+  //   messageArray4,
+  //   messageArraySequence,
+  // ]);
+  const {
+    messageArray,
+    messageArray1,
+    messageArray2,
+    messageArray3,
+    messageArray4,
+    messageArraySequence,
+  } = useLoaderData();
+  useEffect(() => {
+    const temp = messageArray4[1];
+    messageArray4[1] = messageArray4[0];
+    messageArray4[0] = temp;
+
+    console.log(
+      messageArray,
+      messageArray1,
+      messageArray2,
+      messageArray3,
+      messageArray4,
+      messageArraySequence
+    );
+  }, []);
   const [messages, setMessages] = useState([]);
   const [selectedMessagingOption, setSelectedMessagingOption] = useState(null);
 
@@ -78,6 +162,7 @@ const ChatbotComponent = () => {
   };
 
   const [emailVerified, setEmailVerified] = useState("");
+  const [ContactButtonDisable, setContactDisable] = useState("");
 
   useEffect(() => {
     if (emailVerified !== "") {
@@ -236,12 +321,6 @@ const ChatbotComponent = () => {
 
   const { Option } = Select;
 
-  const user = {
-    name: "Helena",
-    profileImage: avatar,
-    date: "Dec 14",
-    time: "12:30 PM",
-  };
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -312,18 +391,11 @@ const ChatbotComponent = () => {
   useEffect(() => {
     setShowCard(false);
     const delay = 500;
-    const chatSequence = [
-      { type: "name", content: "" },
-      { type: "bot", content: "Hi 👋" },
-      { type: "bot", content: "I'm Helena from Traders Lab." },
-      {
-        type: "bot",
-        content:
-          "Do you want to find out how you could unlock the $10,000 profit trading digital currencies?",
-      },
-      { type: "button", content: "Yes" },
-    ];
-
+    const chatSequence = messageArraySequence;
+    const temp = chatSequence.pop();
+    chatSequence.unshift(temp);
+    const temp2 = chatSequence.pop();
+    chatSequence.unshift(temp2);
     const addMessageWithDelay = (message, index) => {
       setTimeout(() => {
         setMessages((prevMessages) => [...prevMessages, message]);
@@ -331,9 +403,11 @@ const ChatbotComponent = () => {
     };
 
     const runChatSequence = async () => {
-      for (let i = 0; i < chatSequence.length; i++) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
-        addMessageWithDelay(chatSequence[i], i);
+      if (chatSequence) {
+        for (let i = 0; i < chatSequence.length; i++) {
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          addMessageWithDelay(chatSequence[i], i);
+        }
       }
     };
 
@@ -450,7 +524,6 @@ const ChatbotComponent = () => {
       ...messageArray, // Use spread syntax to include the imported messageArray
     ]);
   };
-
   const renderMessageContent = (message) => {
     switch (message.type) {
       case "email&phone":
@@ -499,13 +572,18 @@ const ChatbotComponent = () => {
 
       case "YesNo":
         return (
-          <Row gutter={8}>
+          <Row gutter={8} style={{ marginBottom: "18px" }}>
             <Col>
               {" "}
               <Button
                 className="bg-blue-500 text-white"
                 onClick={() =>
                   handleButtonClick([
+                    {
+                      type: "bot",
+                      content:
+                        "Acknowldged! Let's get started with 3 Swift Questions",
+                    },
                     { type: "name", content: "" },
                     ...messageArray2,
                   ])
@@ -666,13 +744,21 @@ const ChatbotComponent = () => {
       case "card":
         return (
           <div
-            onClick={() =>
-              handleButtonClick([
-                { type: "name", content: "" },
-                { type: `${message.content}`, content: "" },
-              ])
-            }
-            className="bg-blue-100 text-blue-700 font-semibold p-2 mb-1 items-center w-48 rounded-lg flex items-center justify-center"
+            onClick={() => {
+              if (ContactButtonDisable === "") {
+                handleButtonClick([
+                  { type: "name", content: "" },
+                  { type: `${message.content}`, content: "" },
+                ]);
+                setContactDisable(message.content);
+              }
+            }}
+            className={`${
+              ContactButtonDisable === message.content ||
+              ContactButtonDisable === ""
+                ? "bg-blue-100 text-blue-700 cursor-pointer"
+                : "bg-gray-100 text-gray-700"
+            } font-semibold p-2 mb-3 w-48 rounded-lg flex items-center justify-center`}
           >
             {message.content}
           </div>
@@ -830,130 +916,131 @@ const ChatbotComponent = () => {
   const onclose = () => {
     setShowCard(false);
   };
+
   return (
     <>
       <TopContainer />
-      {showCard && (
-        <div className="fixed top-0 z-10 left-0 w-full h-full bg-black opacity-50"></div>
-      )}
-      {showCard && <CardComponent onClose={onclose} email={email} />}
-      <div
-        className={`flex items-center justify-center mb-5 bg-gradient-to-b from-sky via-white to-white border-b border-gray-300 `}
-      >
-        <CountContainer targetDate={`${targetDate}`} />
-      </div>
-
-      <div className="flex items-center justify-center mb-5">
-        <div className="flex border w-48 rounded-full h-8 items-center my-3">
-          <OnlineStatus />
-          <span className="ml-4 font-bold">Helena is Online</span>
-        </div>
-      </div>
-      <div className="flex  mb-20">
-        <Form
-          layout="vertical"
-          onFinish={onFinish}
-          className="mx-auto w-2/6 text-md mobile:w-4/6"
-          initialValues={{
-            suffix: "USD",
-          }}
+      <div>
+        {showCard && (
+          <div className="fixed top-0 z-10 left-0 w-full h-full bg-black opacity-50"></div>
+        )}
+        {showCard && <CardComponent onClose={onclose} email={email} />}
+        <div
+          className={`flex items-center justify-center mb-5 bg-gradient-to-b from-sky via-white to-white border-b border-gray-300 `}
         >
-          {messages.map((message, index) => (
-            <div key={index}>
-              {message.type === "button" ? (
-                <Button
-                  className="bg-blue-500 text-white"
-                  onClick={() =>
-                    handleButtonClick([
-                      { type: "name", content: "" },
-                      ...messageArray1,
-                    ])
-                  }
-                >
-                  {message.content} 💰
-                </Button>
-              ) : (
-                renderMessageContent(message)
-              )}
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </Form>
-      </div>
-      <div className="mobile:hidden">
-        <Card />
-      </div>
+          <CountContainer targetDate={`${targetDate}`} />
+        </div>
 
-      <Modal
-        title={null}
-        footer={null}
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width="50%"
-        className="custom-modal-class" // Use this class to override styles
-      >
-        <div className="flex flex-col md:flex-row items-center md:items-start">
-          <div className="fixed rounded-lg z-10 w-3/6 mobile:w-full h-4/6 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 border border-gray-300 shadow-md">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
-              onClick={handleCancel}
-            ></button>
-            <div className="flex flex-col items-center md:items-start justify-center space-y-4 mt-12">
-              <p
-                className="w-full md:w-2/4 text-center font-bold text-2xl "
-                style={{ fontFamily: "Inter" }}
-              >
-                One more step...
-              </p>
-              <p className="w-full md:w-2/4 text-center text-lg">
-                We have sent a verification link to:
-              </p>
-              <p className="w-full md:w-2/4 text-center">{email}</p>
-              <p className="w-full md:w-3/4 text-center">
-                Please check your inbox (or spam inbox) and click the
-                verification link in it.
-              </p>
-            </div>
-
-            <div
-              className="flex items-center ml-80 mobile:ml-40 mt-5 "
-              style={{ marginLeft: "270px" }}
-            >
-              <img
-                src={arrow}
-                alt="Profile"
-                className="h-12 w-12 mobile:h-9 mobile:w-9  object-cover -rotate-45 scale-y-[-1]  "
-              />
-              <img
-                src={arrow}
-                alt="Profile"
-                className="h-12 w-12 mobile:h-9 mobile:w-9  object-cover rotate-180"
-              />
-              <img
-                src={arrow}
-                alt="Profile"
-                className="h-12 w-12 mobile:h-9 mobile:w-9  object-cover rotate-45 scale-y-[-1] scale-x-[-1]"
-              />
-            </div>
-
-            <div className="border-t-2 border-b-2 border-black flex w-full md:mt-0 mt-2 -p-2">
-              <p className="w-full md:w-1/3 p-1 font-semibold">
-                Jack Raintbolt
-              </p>
-
-              <p
-                className="w-full md:w-2/3 p-1"
-                onClick={handleParagraphClick}
-                style={{ cursor: "pointer" }}
-                loading={loadings}
-              >
-                [Action Needed] Please Verify Your Email
-              </p>
-            </div>
+        <div className="flex items-center justify-center mb-5">
+          <div className="flex border w-48 rounded-full h-8 items-center my-3">
+            <OnlineStatus />
+            <span className="ml-4 font-bold">Helena is Online</span>
           </div>
         </div>
-      </Modal>
+        <div className="flex  mb-20">
+          <Form
+            layout="vertical"
+            onFinish={onFinish}
+            className="mx-auto w-2/6 text-md mobile:w-4/6"
+            initialValues={{
+              suffix: "USD",
+            }}
+          >
+            {messages.map((message, index) => (
+              <div key={index}>
+                {message.type === "button" ? (
+                  <Button
+                    className="bg-blue-500 text-white"
+                    onClick={() =>
+                      handleButtonClick([
+                        { type: "name", content: "" },
+                        ...messageArray1,
+                      ])
+                    }
+                  >
+                    {message.content} 💰
+                  </Button>
+                ) : (
+                  renderMessageContent(message)
+                )}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </Form>
+        </div>
+        <div className="mobile:hidden">
+          <Card />
+        </div>
+
+        <Modal
+          title={null}
+          footer={null}
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width="50%"
+          className="custom-modal-class" // Use this class to override styles
+        >
+          <div className="flex flex-col md:flex-row items-center md:items-start">
+            <div className="fixed rounded-lg z-10 w-3/6 mobile:w-full h-4/6 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 border border-gray-300 shadow-md">
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-red-500"
+                onClick={handleCancel}
+              ></button>
+              <div className="flex flex-col items-center md:items-start justify-center space-y-4 mt-12">
+                <p
+                  className="w-full md:w-2/4 text-center font-bold text-2xl "
+                  style={{ fontFamily: "Inter" }}
+                >
+                  One more step...
+                </p>
+                <p className="w-full md:w-2/4 text-center text-lg">
+                  We have sent a verification link to:
+                </p>
+                <p className="w-full md:w-2/4 text-center">{email}</p>
+                <p className="w-full md:w-3/4 text-center">
+                  Please check your inbox (or spam inbox) and click the
+                  verification link in it.
+                </p>
+              </div>
+
+              <div
+                className="flex items-center ml-80 mobile:ml-40 mt-5 "
+                style={{ marginLeft: "270px" }}
+              >
+                <img
+                  src={arrow}
+                  alt="Profile"
+                  className="h-12 w-12 mobile:h-9 mobile:w-9  object-cover -rotate-45 scale-y-[-1]  "
+                />
+                <img
+                  src={arrow}
+                  alt="Profile"
+                  className="h-12 w-12 mobile:h-9 mobile:w-9  object-cover rotate-180"
+                />
+                <img
+                  src={arrow}
+                  alt="Profile"
+                  className="h-12 w-12 mobile:h-9 mobile:w-9  object-cover rotate-45 scale-y-[-1] scale-x-[-1]"
+                />
+              </div>
+
+              <div className="border-t-2 border-b-2 border-black flex w-full md:mt-0 mt-2 -p-2">
+                <p className="w-full md:w-1/3 p-1 font-semibold">{name}</p>
+
+                <p
+                  className="w-full md:w-2/3 p-1"
+                  onClick={handleParagraphClick}
+                  style={{ cursor: "pointer" }}
+                  loading={loadings}
+                >
+                  [Action Needed] Please Verify Your Email
+                </p>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      </div>
     </>
   );
 };
