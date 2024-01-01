@@ -3,6 +3,8 @@ import axios from "axios"; // Assuming you will use axios in the future
 import { headerText } from "./HeaderText";
 
 const CountContainer = () => {
+  const intervalDays = 5; // Set the interval for the countdown loop
+
   // Function to get or set the target date
   const getInitialTargetDate = () => {
     const savedDate = localStorage.getItem("targetDate");
@@ -15,19 +17,31 @@ const CountContainer = () => {
     }
   };
 
-  const [countdownData, setCountdownData] = useState(headerText(getInitialTargetDate()));
+  const [countdownData, setCountdownData] = useState(
+    headerText(getInitialTargetDate())
+  );
 
   // Countdown logic
   const updateCountdown = () => {
-    const difference = +countdownData.targetDate - +new Date();
-    if (difference > 0) {
-      setCountdownData((prevState) => ({
-        ...prevState,
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-      }));
+    const now = new Date();
+    let difference = +countdownData.targetDate - +now;
+
+    if (difference <= 0) {
+      // Reset the target date and save to local storage
+      const newTargetDate = new Date(
+        now.getTime() + intervalDays * 24 * 60 * 60 * 1000
+      );
+      localStorage.setItem("targetDate", newTargetDate.toISOString());
+      setCountdownData(headerText(newTargetDate));
+      return; // Return early to avoid setting negative values
     }
+
+    setCountdownData((prevState) => ({
+      ...prevState,
+      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((difference / 1000 / 60) % 60),
+    }));
   };
 
   useEffect(() => {
